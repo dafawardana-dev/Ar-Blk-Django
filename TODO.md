@@ -1,0 +1,3 @@
+- [ ] Fix ArsipService.js create function to accept data parameter
+- [ ] Fix ArsipService.js update function to accept id and data parameters
+- [ ] Fix ArsipService.js delete function to accept id parameter
