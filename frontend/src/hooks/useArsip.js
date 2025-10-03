@@ -1,20 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { ArsipService } from "../api/ArsipService";
 
-/**
- * Custom hook for managing 'arsip' data.
- * It handles fetching, creating, updating, and deleting arsip records,
- * while managing loading and error states.
- */
 export const useArsip = () => {
   const [arsipList, setArsipList] = useState([]);
   const [loading, setLoading] = useState(true); // Start with loading true for initial fetch
   const [error, setError] = useState(null);
 
-  /**
-   * Fetches the complete list of arsip records from the API.
-   * Uses useCallback to prevent re-creation on every render.
-   */
   const fetchArsip = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -31,15 +22,12 @@ export const useArsip = () => {
     }
   }, []);
 
-  // Effect to perform the initial data fetch when the hook is first used.
+  
   useEffect(() => {
     fetchArsip();
   }, [fetchArsip]);
 
-  /**
-   * Creates a new arsip record.
-   * @param {object} arsipData - The data for the new record.
-   */
+
   const createArsip = useCallback(
     async (arsipData) => {
       setLoading(true);
@@ -58,11 +46,6 @@ export const useArsip = () => {
     [fetchArsip]
   );
 
-  /**
-   * Updates an existing arsip record.
-   * @param {string|number} id - The ID of the record to update.
-   * @param {object} arsipData - The new data for the record.
-   */
   const updateArsip = useCallback(
     async (id, arsipData) => {
       setLoading(true);
@@ -81,7 +64,19 @@ export const useArsip = () => {
     [fetchArsip]
   );
 
-  // Return state and functions to be used by components.
+  const deleteArsip = useCallback(
+    async (id) => {      
+      try {
+        await ArsipService.delete(id);       
+        setArsipList((prevList) => prevList.filter((arsip) => arsip.id !== id));
+      } catch (err) {
+        console.error(`Failed to delete arsip with ID ${id}.`, err);
+        throw err; // Re-throw so the component can display a toast notification.
+      }
+    },
+    [] 
+  );
+
   return {
     arsipList,
     loading,
@@ -89,6 +84,6 @@ export const useArsip = () => {
     fetchArsip,
     createArsip,
     updateArsip,
-    // You can also add deleteArsip here following the same pattern
+    deleteArsip,
   };
 };
